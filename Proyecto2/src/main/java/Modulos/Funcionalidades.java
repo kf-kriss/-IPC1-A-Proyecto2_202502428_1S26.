@@ -127,14 +127,14 @@ public class Funcionalidades extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTiendaDescripcionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTiendaDescripcionActionPerformed
-        Tienda T = new Tienda(L);
+        Tienda T = new Tienda(L, this);
         T.setVisible(true);
         
         this.setVisible(false);
     }//GEN-LAST:event_jTiendaDescripcionActionPerformed
 
     private void jAlbumDescripcionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jAlbumDescripcionActionPerformed
-        Album A = new Album(L);
+        Album A = new Album(L, this);
         A.setVisible(true);
         
         this.setVisible(false);

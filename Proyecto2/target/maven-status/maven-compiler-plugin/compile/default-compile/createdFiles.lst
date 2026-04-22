@@ -1,9 +1,15 @@
 Modulos\Eventos.class
 Logica\LogicaCompleta.class
-Modulos\Album.class
 Modulos\Tienda.class
 Modulos\Funcionalidades.class
+Logica\LogicaCompleta$Carta.class
 Modulos\Recompensas.class
+Modulos\Album$1.class
+Logica\LogicaCompleta$ItemCarrito.class
+Logica\LogicaCompleta$Juego.class
+Modulos\Album.class
+Logica\LogicaCompleta$Compra.class
 main\ad\proyecto2\ADProyecto2.class
 Modulos\Reportes.class
 Modulos\Datos.class
+Logica\LogicaCompleta$NodoMatriz.class
