@@ -148,7 +148,7 @@ public class Funcionalidades extends javax.swing.JFrame {
     }//GEN-LAST:event_jEventosDescripcionActionPerformed
 
     private void jRecompensasDescripcionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRecompensasDescripcionActionPerformed
-        Recompensas R = new Recompensas(L);
+        Recompensas R = new Recompensas(L, this);
         R.setVisible(true);
         
         this.setVisible(false);

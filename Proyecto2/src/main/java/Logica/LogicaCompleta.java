@@ -510,244 +510,406 @@ public class LogicaCompleta {
     
 
 
-public class Torneo {
-    public String id;
-    public String nombre;
-    public String juego;
-    public String fecha;
-    public String hora;
-    public double precio;
-    public int tickets;
-    public Torneo siguiente;
+    public class Torneo {
+        public String id;
+        public String nombre;
+        public String juego;
+        public String fecha;
+        public String hora;
+        public double precio;
+        public int tickets;
+        public Torneo siguiente;
 
-    public Torneo(String id, String nombre, String juego, String fecha, String hora, double precio, int tickets) {
-        this.id = id;
-        this.nombre = nombre;
-        this.juego = juego;
-        this.fecha = fecha;
-        this.hora = hora;
-        this.precio = precio;
-        this.tickets = tickets;
-        this.siguiente = null;
-    }
+        public Torneo(String id, String nombre, String juego, String fecha, String hora, double precio, int tickets) {
+            this.id = id;
+            this.nombre = nombre;
+            this.juego = juego;
+            this.fecha = fecha;
+            this.hora = hora;
+            this.precio = precio;
+            this.tickets = tickets;
+            this.siguiente = null;
+        }
 
-    @Override
-    public String toString() {
-        return id + " | " + nombre + " | " + juego + " | " + fecha + " " + hora +
-               " | Q" + precio + " | Tickets: " + tickets;
-    }
-}
-
-public class ClienteTicket {
-    public String nombre;
-    public Torneo torneo;
-
-    public ClienteTicket(String nombre, Torneo torneo) {
-        this.nombre = nombre;
-        this.torneo = torneo;
-    }
-
-    @Override
-    public String toString() {
-        return nombre + " -> " + torneo.nombre;
-    }
-}
-
-public class NodoCola {
-    public ClienteTicket dato;
-    public NodoCola siguiente;
-
-    public NodoCola(ClienteTicket dato) {
-        this.dato = dato;
-        this.siguiente = null;
-    }
-}
-
-public class ColaTickets {
-    public NodoCola frente;
-    public NodoCola fin;
-
-    public ColaTickets() {
-        frente = null;
-        fin = null;
-    }
-
-    public void encolar(ClienteTicket dato) {
-        NodoCola nuevo = new NodoCola(dato);
-
-        if (frente == null) {
-            frente = nuevo;
-            fin = nuevo;
-        } else {
-            fin.siguiente = nuevo;
-            fin = nuevo;
+        @Override
+        public String toString() {
+            return id + " | " + nombre + " | " + juego + " | " + fecha + " " + hora +
+                   " | Q" + precio + " | Tickets: " + tickets;
         }
     }
 
-    public synchronized ClienteTicket desencolar() {
-        if (frente == null) {
-            return null;
+    public class ClienteTicket {
+        public String nombre;
+        public Torneo torneo;
+
+        public ClienteTicket(String nombre, Torneo torneo) {
+            this.nombre = nombre;
+            this.torneo = torneo;
         }
 
-        ClienteTicket dato = frente.dato;
-        frente = frente.siguiente;
+        @Override
+        public String toString() {
+            return nombre + " -> " + torneo.nombre;
+        }
+    }
 
-        if (frente == null) {
+    public class NodoCola {
+        public ClienteTicket dato;
+        public NodoCola siguiente;
+
+        public NodoCola(ClienteTicket dato) {
+            this.dato = dato;
+            this.siguiente = null;
+        }
+    }
+
+    public class ColaTickets {
+        public NodoCola frente;
+        public NodoCola fin;
+
+        public ColaTickets() {
+            frente = null;
             fin = null;
         }
+    
+        public void encolar(ClienteTicket dato) {
+            NodoCola nuevo = new NodoCola(dato);
 
-        return dato;
+            if (frente == null) {
+                frente = nuevo;
+                fin = nuevo;
+            } else {
+                fin.siguiente = nuevo;
+                fin = nuevo;
+            }
+        }
+
+        public synchronized ClienteTicket desencolar() {
+            if (frente == null) {
+                return null;
+            }
+
+            ClienteTicket dato = frente.dato;
+            frente = frente.siguiente;
+
+            if (frente == null) {
+                fin = null;
+            }
+
+            return dato;
+        }
+
+        public boolean estaVacia() {
+            return frente == null;
+        }
+
+        public String mostrar() {
+            String texto = "";
+            NodoCola aux = frente;
+
+            if (aux == null) {
+                return "Cola vacía";
+            }
+
+            while (aux != null) {
+                texto += aux.dato.toString() + "\n";
+                aux = aux.siguiente;
+            }
+
+            return texto;
+        }
+    
+        public int size() {
+            int count = 0;
+            NodoCola aux = frente;
+
+            while (aux != null) {
+                count++;
+                aux = aux.siguiente;
+            }
+
+        return count;
+        }
     }
 
-    public boolean estaVacia() {
-        return frente == null;
+    public Torneo inicioTorneos = null;
+    public ColaTickets colaTickets = new ColaTickets();
+
+    public void cargarTorneos(String ruta) {
+        inicioTorneos = null;
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(ruta));
+            String linea;
+
+            while ((linea = br.readLine()) != null) {
+                String[] p = linea.split("\\|");
+
+                if (p.length == 7) {
+                    Torneo nuevo = new Torneo(
+                        p[0],
+                        p[1],
+                        p[2],
+                        p[3],
+                        p[4],
+                        Double.parseDouble(p[5]),
+                        Integer.parseInt(p[6])
+                    );
+
+                    if (inicioTorneos == null) {
+                        inicioTorneos = nuevo;
+                    } else {
+                        Torneo aux = inicioTorneos;
+                        while (aux.siguiente != null) {
+                            aux = aux.siguiente;
+                        }
+                        aux.siguiente = nuevo;
+                    }
+                }
+            }
+
+            br.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al cargar torneos: " + e.getMessage());
+        }
     }
 
-    public String mostrar() {
+    public String mostrarTorneos() {
         String texto = "";
-        NodoCola aux = frente;
+        Torneo aux = inicioTorneos;
 
         if (aux == null) {
-            return "Cola vacía";
+            return "No hay torneos cargados";
         }
 
         while (aux != null) {
-            texto += aux.dato.toString() + "\n";
+            texto += aux.toString() + "\n";
             aux = aux.siguiente;
         }
 
         return texto;
     }
-    
-    public int size() {
-    int count = 0;
-    NodoCola aux = frente;
 
-    while (aux != null) {
-        count++;
-        aux = aux.siguiente;
-    }
+    public Torneo buscarTorneo(String id) {
+        Torneo aux = inicioTorneos;
 
-    return count;
-}
-    
-}
-
-public Torneo inicioTorneos = null;
-public ColaTickets colaTickets = new ColaTickets();
-
-public void cargarTorneos(String ruta) {
-    inicioTorneos = null;
-
-    try {
-        BufferedReader br = new BufferedReader(new FileReader(ruta));
-        String linea;
-
-        while ((linea = br.readLine()) != null) {
-            String[] p = linea.split("\\|");
-
-            if (p.length == 7) {
-                Torneo nuevo = new Torneo(
-                    p[0],
-                    p[1],
-                    p[2],
-                    p[3],
-                    p[4],
-                    Double.parseDouble(p[5]),
-                    Integer.parseInt(p[6])
-                );
-
-                if (inicioTorneos == null) {
-                    inicioTorneos = nuevo;
-                } else {
-                    Torneo aux = inicioTorneos;
-                    while (aux.siguiente != null) {
-                        aux = aux.siguiente;
-                    }
-                    aux.siguiente = nuevo;
-                }
+        while (aux != null) {
+            if (aux.id.equalsIgnoreCase(id)) {
+                return aux;
             }
+            aux = aux.siguiente;
         }
 
-        br.close();
-
-    } catch (Exception e) {
-        System.out.println("Error al cargar torneos: " + e.getMessage());
-    }
-}
-
-public String mostrarTorneos() {
-    String texto = "";
-    Torneo aux = inicioTorneos;
-
-    if (aux == null) {
-        return "No hay torneos cargados";
+        return null;
     }
 
-    while (aux != null) {
-        texto += aux.toString() + "\n";
-        aux = aux.siguiente;
-    }
 
-    return texto;
-}
+    public boolean inscribirCliente(String nombre, String idTorneo) {
+        Torneo torneo = buscarTorneo(idTorneo);
 
-public Torneo buscarTorneo(String id) {
-    Torneo aux = inicioTorneos;
-
-    while (aux != null) {
-        if (aux.id.equalsIgnoreCase(id)) {
-            return aux;
+        if (torneo == null || nombre.trim().equals("")) {
+            return false;
         }
-        aux = aux.siguiente;
+
+        if (torneo.tickets <= 0) {
+            return false;
+        }
+
+        ClienteTicket cliente = new ClienteTicket(nombre, torneo);
+        colaTickets.encolar(cliente);
+        return true;
     }
 
-    return null;
-}
+    public void guardarTicketVendido(String ruta, ClienteTicket cliente, String taquilla) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(ruta, true));
 
+            bw.write(
+                LocalDateTime.now().toString() + "|" +
+                taquilla + "|" +
+                cliente.nombre + "|" +
+                cliente.torneo.id + "|" +
+                cliente.torneo.nombre + "|" +
+                cliente.torneo.precio
+            );
 
-public boolean inscribirCliente(String nombre, String idTorneo) {
-    Torneo torneo = buscarTorneo(idTorneo);
+            bw.newLine();
+            bw.close();
 
-    if (torneo == null || nombre.trim().equals("")) {
-        return false;
+        } catch (Exception e) {
+            System.out.println("Error al guardar ticket: " + e.getMessage());
+        }
     }
 
-    if (torneo.tickets <= 0) {
-        return false;
-    }
-
-    ClienteTicket cliente = new ClienteTicket(nombre, torneo);
-    colaTickets.encolar(cliente);
-    return true;
-}
-
-public void guardarTicketVendido(String ruta, ClienteTicket cliente, String taquilla) {
-    try {
-        BufferedWriter bw = new BufferedWriter(new FileWriter(ruta, true));
-
-        bw.write(
-            LocalDateTime.now().toString() + "|" +
-            taquilla + "|" +
-            cliente.nombre + "|" +
-            cliente.torneo.id + "|" +
-            cliente.torneo.nombre + "|" +
-            cliente.torneo.precio
-        );
-
-        bw.newLine();
-        bw.close();
-
-    } catch (Exception e) {
-        System.out.println("Error al guardar ticket: " + e.getMessage());
-    }
-}
 
 
-
+    
     //-----------------------------------------------------------------------------
     //-----------------------------------------------------------------------------
 
+public interface Guardable {
+    void guardar(String ruta);
+}
+
+public abstract class Recompensa {
+    public abstract int obtenerXP();
+}
+
+public class RecompensaCompra extends Recompensa {
+    public int obtenerXP() {
+        return 50;
+    }
+}
+
+public class RecompensaEvento extends Recompensa {
+    public int obtenerXP() {
+        return 150;
+    }
+}
+
+public class RecompensaAlbum extends Recompensa {
+    public int obtenerXP() {
+        return 20;
+    }
+}
+
+public int xpUsuario = 0;
+
+public void aplicarRecompensa(Recompensa r) {
+    xpUsuario += r.obtenerXP();
+}
+
+public int obtenerNivel() {
+    if (xpUsuario >= 7000) return 5;
+    if (xpUsuario >= 3500) return 4;
+    if (xpUsuario >= 1500) return 3;
+    if (xpUsuario >= 500) return 2;
+    return 1;
+}
+
+public String obtenerRango() {
+    int nivel = obtenerNivel();
+
+    if (nivel == 5) return "Leyenda";
+    if (nivel == 4) return "Maestro";
+    if (nivel == 3) return "Veterano";
+    if (nivel == 2) return "Jugador";
+    return "Aprendiz";
+}
+
+public int obtenerXPMin() {
+    int n = obtenerNivel();
+
+    if (n == 5) return 7000;
+    if (n == 4) return 3500;
+    if (n == 3) return 1500;
+    if (n == 2) return 500;
+    return 0;
+}
+
+public int obtenerXPMax() {
+    int n = obtenerNivel();
+
+    if (n == 1) return 500;
+    if (n == 2) return 1500;
+    if (n == 3) return 3500;
+    if (n == 4) return 7000;
+    return 7000;
+}
+
+public int progresoNivel() {
+    if (obtenerNivel() == 5) return 100;
+
+    int min = obtenerXPMin();
+    int max = obtenerXPMax();
+
+    return (xpUsuario - min) * 100 / (max - min);
+}
+
+public String mostrarLogros() {
+    String t = "";
+
+    t += xpUsuario >= 50 ? "✔ Primera compra\n" : "✘ Primera compra\n";
+    t += xpUsuario >= 200 ? "✔ Primer avance\n" : "✘ Primer avance\n";
+    t += xpUsuario >= 500 ? "✔ Jugador\n" : "✘ Jugador\n";
+    t += xpUsuario >= 1000 ? "✔ Gamer dedicado\n" : "✘ Gamer dedicado\n";
+    t += xpUsuario >= 1500 ? "✔ Veterano\n" : "✘ Veterano\n";
+    t += xpUsuario >= 2000 ? "✔ Gran gastador\n" : "✘ Gran gastador\n";
+    t += xpUsuario >= 3500 ? "✔ Maestro\n" : "✘ Maestro\n";
+    t += xpUsuario >= 7000 ? "✔ Leyenda\n" : "✘ Leyenda\n";
+
+    return t;
+}
+
+public class NodoUsuario {
+    public String nombre;
+    public int xp;
+    public NodoUsuario sig;
+
+    public NodoUsuario(String n, int x) {
+        nombre = n;
+        xp = x;
+        sig = null;
+    }
+}
+
+public NodoUsuario crearListaUsuarios() {
+    NodoUsuario a = new NodoUsuario("Carlos", xpUsuario);
+    a.sig = new NodoUsuario("Ana", 1200);
+    a.sig.sig = new NodoUsuario("Luis", 800);
+    a.sig.sig.sig = new NodoUsuario("Mario", 3000);
+    a.sig.sig.sig.sig = new NodoUsuario("Sofia", 5000);
+
+    return a;
+}
+
+public NodoUsuario ordenarUsuarios(NodoUsuario head) {
+    if (head == null) return null;
+
+    boolean cambio;
+    do {
+        cambio = false;
+        NodoUsuario aux = head;
+
+        while (aux.sig != null) {
+            if (aux.xp < aux.sig.xp) {
+                int tx = aux.xp;
+                String tn = aux.nombre;
+
+                aux.xp = aux.sig.xp;
+                aux.nombre = aux.sig.nombre;
+
+                aux.sig.xp = tx;
+                aux.sig.nombre = tn;
+
+                cambio = true;
+            }
+            aux = aux.sig;
+        }
+
+    } while (cambio);
+
+    return head;
+}
+
+public String mostrarLeaderboard() {
+    NodoUsuario lista = ordenarUsuarios(crearListaUsuarios());
+
+    String t = "";
+    int pos = 1;
+
+    while (lista != null) {
+        t += pos + ". " + lista.nombre + " - " + lista.xp + " XP\n";
+        lista = lista.sig;
+        pos++;
+    }
+
+    return t;
+}
 
 
+
+
+    
 }

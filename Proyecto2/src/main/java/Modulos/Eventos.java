@@ -15,33 +15,34 @@ public class Eventos extends javax.swing.JFrame {
     private Funcionalidades F;
 
     public Eventos(LogicaCompleta L, Funcionalidades F) {
-    initComponents();
-    this.L = L;
-    this.F = F;
+        initComponents();
+        this.L = L;
+        this.F = F;
 
-    setLocationRelativeTo(null);
-}
+        setLocationRelativeTo(null);
+    }
     
     
     public void procesarTicket(String taquilla) {
-    while (!L.colaTickets.estaVacia()) {
-        LogicaCompleta.ClienteTicket cliente = L.colaTickets.desencolar();
+        while (!L.colaTickets.estaVacia()) {
+            LogicaCompleta.ClienteTicket cliente = L.colaTickets.desencolar();
 
-        if (cliente != null) {
-            if (cliente.torneo.tickets > 0) {
+            if (cliente != null) {
+                if (cliente.torneo.tickets > 0) {
                 
-                SwingUtilities.invokeLater(() -> {
-    txtLog.append(taquilla + " atendiendo a " + cliente.nombre + "\n");
-});
+                    SwingUtilities.invokeLater(() -> {
+                    txtLog.append(taquilla + " atendiendo a " + cliente.nombre + "\n");
+                    });
 
-try {
-    Thread.sleep(800);
-} catch (Exception e) {
-}
+                try {
+                    Thread.sleep(800);
+                } catch (Exception e) { }
 
-cliente.torneo.tickets--;
+                cliente.torneo.tickets--;
+                
+                L.aplicarRecompensa(L.new RecompensaEvento());
 
-L.guardarTicketVendido("tickets_vendidos.txt", cliente, taquilla);
+                L.guardarTicketVendido("tickets_vendidos.txt", cliente, taquilla);
                                                     
                 String mensaje = taquilla + " vendió ticket a " + cliente.nombre +
                         " para " + cliente.torneo.nombre + "\n";
@@ -52,25 +53,23 @@ L.guardarTicketVendido("tickets_vendidos.txt", cliente, taquilla);
                     txtTorneos.setText(L.mostrarTorneos());
                 });
 
-                                   
-
-            } else {
-                SwingUtilities.invokeLater(() -> {
-                    txtLog.append("No hay tickets para " + cliente.torneo.nombre + "\n");
-                });
+                } else {
+                    SwingUtilities.invokeLater(() -> {
+                        txtLog.append("No hay tickets para " + cliente.torneo.nombre + "\n");
+                    });
+                }
             }
         }
+
+    SwingUtilities.invokeLater(() -> {
+        txtLog.append(taquilla + " terminó.\n");
+
+        if (L.colaTickets.estaVacia()) {
+            txtLog.append("TODOS LOS TICKETS FUERON PROCESADOS\n");
+        }
+    });
+
     }
-
-SwingUtilities.invokeLater(() -> {
-    txtLog.append(taquilla + " terminó.\n");
-
-    if (L.colaTickets.estaVacia()) {
-        txtLog.append("TODOS LOS TICKETS FUERON PROCESADOS\n");
-    }
-});
-
-}
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -198,33 +197,36 @@ SwingUtilities.invokeLater(() -> {
     }//GEN-LAST:event_btnVolverActionPerformed
 
     private void btnCargarTorneosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargarTorneosActionPerformed
+       
         L.cargarTorneos("torneos.txt");
-    txtTorneos.setText(L.mostrarTorneos());
+        txtTorneos.setText(L.mostrarTorneos());
+        
     }//GEN-LAST:event_btnCargarTorneosActionPerformed
 
     private void btnInscribirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInscribirActionPerformed
 
         String nombre = txtNombre.getText();
-String id = txtIdTorneo.getText();
+        String id = txtIdTorneo.getText();
 
-boolean ok = L.inscribirCliente(nombre, id);
+        boolean ok = L.inscribirCliente(nombre, id);
 
-if (ok) {
-    txtCola.setText(L.colaTickets.mostrar() + "\nTotal en cola: " + L.colaTickets.size());
-    txtNombre.setText("");
-    txtIdTorneo.setText("");
-} else {
-    JOptionPane.showMessageDialog(this, "Datos inválidos o torneo no encontrado");
-}
+        if (ok) {
+            txtCola.setText(L.colaTickets.mostrar() + "\nTotal en cola: " + L.colaTickets.size());
+            txtNombre.setText("");
+            txtIdTorneo.setText("");
+        } else {
+            JOptionPane.showMessageDialog(this, "Datos inválidos o torneo no encontrado");
+        }
 
     }//GEN-LAST:event_btnInscribirActionPerformed
 
     private void btnProcesarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProcesarActionPerformed
-           Thread taquilla1 = new Thread(() -> procesarTicket("Taquilla 1"));
-    Thread taquilla2 = new Thread(() -> procesarTicket("Taquilla 2"));
+        
+        Thread taquilla1 = new Thread(() -> procesarTicket("Taquilla 1"));
+        Thread taquilla2 = new Thread(() -> procesarTicket("Taquilla 2"));
 
-    taquilla1.start();
-    taquilla2.start();
+        taquilla1.start();
+        taquilla2.start();
     
     }//GEN-LAST:event_btnProcesarActionPerformed
 

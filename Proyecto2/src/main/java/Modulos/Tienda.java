@@ -205,6 +205,7 @@ public class Tienda extends javax.swing.JFrame {
         boolean compra = L.confirmarCompra();
 
         if (compra) {
+            L.aplicarRecompensa(L.new RecompensaCompra());
             JOptionPane.showMessageDialog(this, "Compra realizada");
             actualizarAreas();
         } else {
@@ -215,6 +216,8 @@ public class Tienda extends javax.swing.JFrame {
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
     
+        
+        
         F.setVisible(true);
         this.dispose();
     

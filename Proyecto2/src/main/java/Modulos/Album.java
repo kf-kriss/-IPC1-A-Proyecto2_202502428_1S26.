@@ -304,7 +304,9 @@ public class Album extends javax.swing.JFrame {
     }//GEN-LAST:event_btnIntercambiarActionPerformed
 
     private void btnAgregarCartaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarCartaActionPerformed
-        
+
+
+      
         try {
             LogicaCompleta.Carta nueva = L.new Carta(
                 txtCodigo.getText(),
@@ -316,7 +318,8 @@ public class Album extends javax.swing.JFrame {
             Integer.parseInt(txtVida.getText())
         );
 
-            L.agregarCarta(nueva);
+                        L.agregarCarta(nueva);
+            L.aplicarRecompensa(L.new RecompensaAlbum());  
             mostrarAlbum();
 
             txtCodigo.setText("");

@@ -1,1 +1,2 @@
 2026-04-24T01:30:08.246146200|Taquilla 1|Carlos|T1|Torneo FIFA|50.0
+2026-04-24T10:01:37.933327400|Taquilla 1|Kris|T2|Torneo Smash|40.0
