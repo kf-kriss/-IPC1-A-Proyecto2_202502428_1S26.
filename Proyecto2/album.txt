@@ -1,2 +1,4 @@
-0|0|df|df|df|ad|1|1|1
-0|1|01|dad|ada|ada|15|12|45
+0|0|C001|Inferno|Fuego|Rara|10|14|25
+0|1|C002|Aqua|Agua|Comun|34|22|9
+0|2|C003|Groot|Planta|Epica|10|12|36
+0|3|C004|Sombra|Electrico|Legendaria|35|56|45
